@@ -1,0 +1,48 @@
+--TALLER 2
+// C++ code
+//
+// Definición de pines
+const int ledPin = 13;
+const int sensorPin = A0;
+const int motorPin = 5;
+
+// Variables
+float temperatura;
+
+void setup() {
+  // Inicializar el puerto serial
+  Serial.begin(9600);
+
+  // Configurar pines
+  pinMode(ledPin, OUTPUT);
+  pinMode(motorPin, OUTPUT);
+
+  // Inicializar el sensor
+  analogReference(EXTERNAL);
+}
+
+void loop() {
+  // Leer la temperatura del sensor
+  temperatura = (5.0 * analogRead(sensorPin) * 100.0) / 1024.0;
+
+  // Mostrar la temperatura en el monitor serial
+  Serial.print("Temperatura: ");
+  Serial.print(temperatura);
+  Serial.println(" °C");
+
+  // Control del LED y el motor
+  if (temperatura < 5.0) {
+    // Encender el LED en intermitencia
+    digitalWrite(ledPin, HIGH);
+    delay(500);
+    digitalWrite(ledPin, LOW);
+    delay(500);
+  } else if (temperatura >= 6.0 && temperatura <= 25.0) {
+    // Apagar el LED
+    digitalWrite(ledPin, LOW);
+  } else {
+    // Encender el LED y el motor
+    digitalWrite(ledPin, HIGH);
+    digitalWrite(motorPin, HIGH);
+  }
+}
