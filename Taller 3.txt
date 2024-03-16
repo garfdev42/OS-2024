@@ -1,0 +1,56 @@
+Taller 3
+#include <LiquidCrystal.h>
+
+const int lm35Pin = A0;  // Pin de entrada analógica para el sensor LM35
+const int ledPin = 8;    // Pin del LED
+const int motorPin = 9;  // Pin del ventilador (motor)
+
+int seconds = 0;
+int temperature;
+
+LiquidCrystal lcd_1(12, 11, 5, 4, 3, 2);
+
+void setup() {
+  lcd_1.begin(16, 2);
+
+  pinMode(ledPin, OUTPUT);
+  pinMode(motorPin, OUTPUT);
+
+  // Imprimir un mensaje en el LCD
+  lcd_1.print("**Monitor de Temperatura**");
+}
+
+void loop() {
+  lcd_1.setCursor(0, 1);
+
+  // Leer la temperatura del sensor LM35
+  int sensorValue = analogRead(lm35Pin);
+  temperature = (sensorValue * 500) / 1024; // Convertir el valor del sensor a temperatura en grados Celsius
+
+  // Mostrar la temperatura en el LCD y en el monitor serial
+  lcd_1.print("Temp: ");
+  lcd_1.print(temperature);
+  lcd_1.print(" C ");
+  Serial.print("Temperatura: ");
+  Serial.println(temperature);
+
+  // Realizar las validaciones
+  if (temperature <= 10) {
+    // Validación 1: Temperatura <= 10°C
+    digitalWrite(ledPin, HIGH); // Encender el LED
+    digitalWrite(motorPin, LOW); // Apagar el ventilador
+    delay(500); // Parpadear el LED con un delay de medio segundo
+    digitalWrite(ledPin, LOW); // Apagar el LED
+    delay(500); // Parpadear el LED con un delay de medio segundo
+  } else if (temperature >= 26) {
+    // Validación 3: Temperatura >= 26°C
+    digitalWrite(ledPin, HIGH); // Encender el LED
+    digitalWrite(motorPin, HIGH); // Encender el ventilador
+  } else {
+    // Validación 2: Temperatura entre 11°C y 25°C
+    digitalWrite(ledPin, LOW); // Apagar el LED
+    digitalWrite(motorPin, LOW); // Apagar el ventilador
+  }
+
+  delay(1000);
+}
